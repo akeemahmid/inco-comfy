@@ -15,7 +15,7 @@ let incoInstance: any = null;
 export async function getIncoConfig() {
   if (!incoInstance) {
     const chainId = publicClient.chain.id;
-    incoInstance = await Lightning.latest("devnet", chainId);
+    incoInstance = await Lightning.latest("testnet", chainId);
   }
   return incoInstance;
 }

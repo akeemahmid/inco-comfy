@@ -9,7 +9,7 @@ interface CERC20Config {
 // Base Sepolia with Inco's cUSDC
 export const chainsToCUSDC: CERC20Config = {
     84532: {
-        cusdc: "0x7bad07b6b6064dfb033207794625ffa4322cb392", 
+        cusdc: "0x0fb7E5214e853a17230feD27Cda0d6fd16CFE319", 
     },
 }
 

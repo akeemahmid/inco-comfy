@@ -311,12 +311,12 @@ const ConfidentialSalaryPage = () => {
                       rel="noopener noreferrer"
                       className="text-green-500 hover:underline"
                     >
-                      ✅ Success
+                      Success
                     </a>
                   )}
                   {tx.status === "error" && (
                     <span className="text-red-500" title={tx.error}>
-                      ❌ Failed
+                      Failed
                     </span>
                   )}
                 </div>
