@@ -16,6 +16,10 @@ export async function getIncoConfig() {
   if (!incoInstance) {
     const chainId = publicClient.chain.id;
     incoInstance = await Lightning.latest("testnet", chainId);
+    console.log("🔧 Inco instance created:", {
+      executorAddress: incoInstance.executorAddress,
+      chainId,
+    });
   }
   return incoInstance;
 }
@@ -31,18 +35,24 @@ export async function encryptValue({
 }): Promise<`0x${string}`> {
   const inco = await getIncoConfig();
 
+  console.log("🔐 Encrypting value:", {
+    value: value.toString(),
+    accountAddress: address,
+    dappAddress: contractAddress,
+    handleType: handleTypes.euint256,
+  });
+
   const encryptedData = await inco.encrypt(value, {
     accountAddress: address,
     dappAddress: contractAddress,
     handleType: handleTypes.euint256,
   });
 
-  console.log("Encrypted data: ", encryptedData);
+  console.log("Encrypted data generated:", encryptedData);
 
   return encryptedData as `0x${string}`;
 }
 
-// ADD THIS NEW FUNCTION:
 export async function decryptValue({
   walletClient,
   handle,
@@ -51,31 +61,33 @@ export async function decryptValue({
   handle: string;
 }): Promise<bigint> {
   const inco = await getIncoConfig();
-
   const attestedDecrypt = await inco.attestedDecrypt(walletClient, [
     handle as `0x${string}`,
   ]);
-
   return attestedDecrypt[0].plaintext.value as bigint;
 }
 
-export async function getFee(): Promise<bigint> {
+
+export async function getExecutorFee(): Promise<bigint> {
   const inco = await getIncoConfig();
-
-  const fee = await publicClient.readContract({
-    address: inco.executorAddress,
-    abi: [
-      {
-        type: "function",
-        inputs: [],
-        name: "getFee",
-        outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
-        stateMutability: "pure",
-      },
-    ],
-    functionName: "getFee",
-  });
-
-  console.log("Fee: ", fee);
-  return fee;
+  try {
+    const fee = await publicClient.readContract({
+      address: inco.executorAddress,
+      abi: [
+        {
+          type: "function",
+          inputs: [],
+          name: "getFee",
+          outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
+          stateMutability: "pure",
+        },
+      ],
+      functionName: "getFee",
+    });
+    console.log(" Executor fee:", fee.toString());
+    return fee as bigint;
+  } catch (error) {
+    console.error(" Failed to get executor fee:", error);
+    throw error;
+  }
 }
